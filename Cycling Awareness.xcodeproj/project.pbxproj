@@ -16,6 +16,7 @@
 		651ECB0E2659AFC70030C397 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 651ECB0C2659AFC70030C397 /* LaunchScreen.storyboard */; };
 		651ECB192659AFC70030C397 /* Cycling_AwarenessTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651ECB182659AFC70030C397 /* Cycling_AwarenessTests.swift */; };
 		651ECB242659AFC70030C397 /* Cycling_AwarenessUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651ECB232659AFC70030C397 /* Cycling_AwarenessUITests.swift */; };
+		651ECB322659B0400030C397 /* Road Sign Object Detector 1.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 651ECB312659B0400030C397 /* Road Sign Object Detector 1.mlmodel */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +52,7 @@
 		651ECB1F2659AFC70030C397 /* Cycling AwarenessUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Cycling AwarenessUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		651ECB232659AFC70030C397 /* Cycling_AwarenessUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cycling_AwarenessUITests.swift; sourceTree = "<group>"; };
 		651ECB252659AFC70030C397 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		651ECB312659B0400030C397 /* Road Sign Object Detector 1.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = "Road Sign Object Detector 1.mlmodel"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +103,7 @@
 		651ECAFD2659AFC60030C397 /* Cycling Awareness */ = {
 			isa = PBXGroup;
 			children = (
+				651ECB312659B0400030C397 /* Road Sign Object Detector 1.mlmodel */,
 				651ECAFE2659AFC60030C397 /* AppDelegate.swift */,
 				651ECB002659AFC60030C397 /* SceneDelegate.swift */,
 				651ECB022659AFC60030C397 /* ViewController.swift */,
@@ -264,6 +267,7 @@
 				651ECB032659AFC60030C397 /* ViewController.swift in Sources */,
 				651ECAFF2659AFC60030C397 /* AppDelegate.swift in Sources */,
 				651ECB012659AFC60030C397 /* SceneDelegate.swift in Sources */,
+				651ECB322659B0400030C397 /* Road Sign Object Detector 1.mlmodel in Sources */,
 				651ECB092659AFC60030C397 /* Cycling_Awareness.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

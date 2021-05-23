@@ -24,6 +24,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     //Функция, которая выполняется, когда приложение запускается
     override func viewDidLoad() {
         super.viewDidLoad()
+        sceneView?.antialiasingMode = SCNAntialiasingMode.multisampling2X
         guard let myScene = SCNScene(named: "Main Scene.scn")
             else { fatalError("Unable to load scene file.") }
         sceneView?.scene = myScene // Your app's SCNView

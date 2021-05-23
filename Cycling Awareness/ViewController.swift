@@ -15,6 +15,9 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     
     //Адрес изображения на локальном сервере
     let imageURl = "http://172.20.10.2:8080/picture.jpg"
+    
+    //Переменная объекта ровер
+    var roverNode:SCNNode!
 
     @IBOutlet weak var photoImageView: UIImageView?
     @IBOutlet weak var sceneView: SCNView?
@@ -28,6 +31,12 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         guard let myScene = SCNScene(named: "Main Scene.scn")
             else { fatalError("Unable to load scene file.") }
         sceneView?.scene = myScene // Your app's SCNView
+        
+        //Привязываем объект ровер к переменной roverNode
+        roverNode = myScene.rootNode.childNode(withName: "Perseverance", recursively: true)
+        //Выводим в консоль положение объекта в глобальной системе координат
+        print(roverNode.simdWorldPosition)  //в глобальной
+        print(roverNode.position)           //в локальной
     }
  
     
@@ -50,6 +59,12 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     //Функция, которая исполняется по нажатии на кнопку
     @IBAction func testPhoto(sender: UIButton) {
         print("PEPEGA")
+        
+        
+        //Обновляем позицию ровера
+        var newPosition = SCNVector3(x: 0, y: 0, z: roverNode.position.z - 1)
+        roverNode.position = newPosition
+        
         
         //Захватываем изображение по HTTP
         guard let url = URL(string: imageURl)else {

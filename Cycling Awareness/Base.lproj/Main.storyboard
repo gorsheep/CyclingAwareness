@@ -17,13 +17,17 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6Er-Qh-H3C">
-                                <rect key="frame" x="2" y="170" width="410" height="414"/>
+                                <rect key="frame" x="2" y="44" width="410" height="414"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="6Er-Qh-H3C" secondAttribute="height" multiplier="1:1" id="5KH-vX-vYA"/>
                                 </constraints>
                             </imageView>
+                            <sceneKitView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="KgX-pR-rHR">
+                                <rect key="frame" x="1" y="466" width="410" height="274"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </sceneKitView>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IkL-dM-3YU">
-                                <rect key="frame" x="175" y="708" width="64" height="30"/>
+                                <rect key="frame" x="175" y="748" width="64" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Press Me"/>
                                 <connections>
@@ -40,6 +44,7 @@
                     </view>
                     <connections>
                         <outlet property="photoImageView" destination="6Er-Qh-H3C" id="F3U-jZ-d6J"/>
+                        <outlet property="sceneView" destination="KgX-pR-rHR" id="26U-Mg-vAp"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

@@ -6,15 +6,30 @@
 //
 
 import UIKit
+import SceneKit
 import CoreML
 import Vision
 import ImageIO
 
 class ViewController: UIViewController, UINavigationControllerDelegate {
     
+    //Адрес изображения на локальном сервере
     let imageURl = "http://172.20.10.2:8080/picture.jpg"
 
     @IBOutlet weak var photoImageView: UIImageView?
+    @IBOutlet weak var sceneView: SCNView?
+    
+    
+    
+    //Функция, которая выполняется, когда приложение запускается
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        guard let myScene = SCNScene(named: "Main Scene.scn")
+            else { fatalError("Unable to load scene file.") }
+        sceneView?.scene = myScene // Your app's SCNView
+    }
+ 
+    
     
     lazy var detectionRequest: VNCoreMLRequest = {
         do {
@@ -30,11 +45,10 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         }
     }()
     
+    
+    //Функция, которая исполняется по нажатии на кнопку
     @IBAction func testPhoto(sender: UIButton) {
         print("PEPEGA")
-        
-        //Вот тут будем захватывать фотографию по http и вызывать updateDetections()
-        //self.photoImageView?.load(urlString: imageURl)
         
         //Захватываем изображение по HTTP
         guard let url = URL(string: imageURl)else {
@@ -53,10 +67,6 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
                 }
             }
         }
-        
-        
-        
-        
         
     }
     
@@ -106,46 +116,20 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
 //            The coordinates are normalized to the dimensions of the processed image, with the origin at the image's lower-left corner.
             let boundingBox = detection.boundingBox
             let rectangle = CGRect(x: boundingBox.minX*image.size.width, y: (1-boundingBox.minY-boundingBox.height)*image.size.height, width: boundingBox.width*image.size.width, height: boundingBox.height*image.size.height)
-            UIColor(red: 0, green: 1, blue: 0, alpha: 0.4).setFill()
+            UIColor(red: 0, green: 0.423529, blue: 1, alpha: 0.4).setFill()
             UIRectFillUsingBlendMode(rectangle, CGBlendMode.normal)
+            
+            print("(", boundingBox.minX, ",", boundingBox.minY, ")")
+            print("(", boundingBox.maxX, ",", boundingBox.maxY, ")")
+            print(boundingBox.height)
+            print(boundingBox.width)
         }
         
         let newImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         self.photoImageView?.image = newImage
     }
+    
+    
+    
 }
-
-/*
-extension ViewController: UIImagePickerControllerDelegate {
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        picker.dismiss(animated: true)
-
-        guard let image = info[.originalImage] as? UIImage else {
-            return
-        }
-
-        self.photoImageView?.image = image
-        updateDetections(for: image)
-    }
-}
-*/
-
-/*
-extension UIImageView {
-    func load(urlString : String) {
-        guard let url = URL(string: urlString)else {
-            return
-        }
-        DispatchQueue.global().async { [weak self] in
-            if let data = try? Data(contentsOf: url) {
-                if let image = UIImage(data: data) {
-                    DispatchQueue.main.async {
-                        self?.image = image
-                    }
-                }
-            }
-        }
-    }
-}
-*/

@@ -17,6 +17,9 @@
 		651ECB192659AFC70030C397 /* Cycling_AwarenessTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651ECB182659AFC70030C397 /* Cycling_AwarenessTests.swift */; };
 		651ECB242659AFC70030C397 /* Cycling_AwarenessUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651ECB232659AFC70030C397 /* Cycling_AwarenessUITests.swift */; };
 		651ECB322659B0400030C397 /* Road Sign Object Detector 1.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 651ECB312659B0400030C397 /* Road Sign Object Detector 1.mlmodel */; };
+		651ECB34265A4A970030C397 /* Main Scene.scn in Resources */ = {isa = PBXBuildFile; fileRef = 651ECB33265A4A970030C397 /* Main Scene.scn */; };
+		651ECB38265A54910030C397 /* Perseverance.scn in Resources */ = {isa = PBXBuildFile; fileRef = 651ECB37265A54910030C397 /* Perseverance.scn */; };
+		6566A698265A6E7C00919249 /* White Box.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 6566A697265A6E7C00919249 /* White Box.jpg */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +56,9 @@
 		651ECB232659AFC70030C397 /* Cycling_AwarenessUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cycling_AwarenessUITests.swift; sourceTree = "<group>"; };
 		651ECB252659AFC70030C397 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		651ECB312659B0400030C397 /* Road Sign Object Detector 1.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = "Road Sign Object Detector 1.mlmodel"; sourceTree = "<group>"; };
+		651ECB33265A4A970030C397 /* Main Scene.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "Main Scene.scn"; sourceTree = "<group>"; };
+		651ECB37265A54910030C397 /* Perseverance.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = Perseverance.scn; sourceTree = "<group>"; };
+		6566A697265A6E7C00919249 /* White Box.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "White Box.jpg"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,6 +114,7 @@
 				651ECB002659AFC60030C397 /* SceneDelegate.swift */,
 				651ECB022659AFC60030C397 /* ViewController.swift */,
 				651ECB042659AFC60030C397 /* Main.storyboard */,
+				651ECB36265A543A0030C397 /* Graphic Assets */,
 				651ECB0A2659AFC70030C397 /* Assets.xcassets */,
 				651ECB0C2659AFC70030C397 /* LaunchScreen.storyboard */,
 				651ECB0F2659AFC70030C397 /* Info.plist */,
@@ -132,6 +139,16 @@
 				651ECB252659AFC70030C397 /* Info.plist */,
 			);
 			path = "Cycling AwarenessUITests";
+			sourceTree = "<group>";
+		};
+		651ECB36265A543A0030C397 /* Graphic Assets */ = {
+			isa = PBXGroup;
+			children = (
+				651ECB33265A4A970030C397 /* Main Scene.scn */,
+				651ECB37265A54910030C397 /* Perseverance.scn */,
+				6566A697265A6E7C00919249 /* White Box.jpg */,
+			);
+			path = "Graphic Assets";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -239,7 +256,10 @@
 			files = (
 				651ECB0E2659AFC70030C397 /* LaunchScreen.storyboard in Resources */,
 				651ECB0B2659AFC70030C397 /* Assets.xcassets in Resources */,
+				651ECB38265A54910030C397 /* Perseverance.scn in Resources */,
 				651ECB062659AFC60030C397 /* Main.storyboard in Resources */,
+				6566A698265A6E7C00919249 /* White Box.jpg in Resources */,
+				651ECB34265A4A970030C397 /* Main Scene.scn in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

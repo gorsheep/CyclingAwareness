@@ -16,9 +16,11 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     //Адрес изображения на локальном сервере
     let imageURl = "http://172.20.10.2:8080/picture.jpg"
     
-    //Переменная объекта ровер
-    var roverNode:SCNNode!
+    //Переменные объектов
+    var bicycleNode:SCNNode!
+    var car1Node:SCNNode!
 
+    //Аутлеты UI элементов
     @IBOutlet weak var photoImageView: UIImageView?
     @IBOutlet weak var sceneView: SCNView?
     
@@ -27,16 +29,30 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     //Функция, которая выполняется, когда приложение запускается
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //Устанавливаем режим сглаживания (antialiasing)
         sceneView?.antialiasingMode = SCNAntialiasingMode.multisampling2X
+        
+        //Привязываем 3D сцену к UI элементу SCNView
         guard let myScene = SCNScene(named: "Main Scene.scn")
             else { fatalError("Unable to load scene file.") }
-        sceneView?.scene = myScene // Your app's SCNView
+        sceneView?.scene = myScene
         
-        //Привязываем объект ровер к переменной roverNode
-        roverNode = myScene.rootNode.childNode(withName: "Perseverance", recursively: true)
-        //Выводим в консоль положение объекта в глобальной системе координат
-        print(roverNode.simdWorldPosition)  //в глобальной
-        print(roverNode.position)           //в локальной
+        //Привязываем объекты к их переменным
+        bicycleNode = myScene.rootNode.childNode(withName: "Bicycle", recursively: true)
+        car1Node    = myScene.rootNode.childNode(withName: "Car", recursively: true)
+        
+        
+        //Выводим в консоль координаты машины
+        print(car1Node.simdWorldPosition)  //в глобальной СК
+        print(car1Node.position)           //в локальной СК
+        
+        //Прячем машину
+        //car1Node.isHidden = true
+        //Показываем машину
+        //car1Node.isHidden = false
+        
+        
     }
  
     
@@ -61,9 +77,9 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         print("PEPEGA")
         
         
-        //Обновляем позицию ровера
-        var newPosition = SCNVector3(x: 0, y: 0, z: roverNode.position.z - 1)
-        roverNode.position = newPosition
+        //Обновляем позицию машины
+        let newPosition = SCNVector3(x: 0, y: 0, z: car1Node.position.z - 100)
+        car1Node.position = newPosition
         
         
         //Захватываем изображение по HTTP

@@ -30,7 +30,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         super.viewDidLoad()
         
         //Устанавливаем режим сглаживания (antialiasing)
-        sceneView?.antialiasingMode = SCNAntialiasingMode.multisampling2X
+        sceneView?.antialiasingMode = SCNAntialiasingMode.multisampling4X
         
         //Привязываем 3D сцену к UI элементу SCNView
         guard let myScene = SCNScene(named: "Main Scene.scn")
@@ -80,6 +80,10 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         //Обновляем позицию машины
         let newPosition = SCNVector3(x: 0, y: 0, z: car1Node.position.z + 100)
         car1Node.position = newPosition
+        
+        //Выводим в консоль координаты машины
+        print(car1Node.simdWorldPosition)  //в глобальной СК
+        print(car1Node.position)           //в локальной СК
         
         
         //Захватываем изображение по HTTP

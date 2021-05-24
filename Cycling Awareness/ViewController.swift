@@ -78,7 +78,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         
         
         //Обновляем позицию машины
-        let newPosition = SCNVector3(x: 0, y: 0, z: car1Node.position.z - 100)
+        let newPosition = SCNVector3(x: 0, y: 0, z: car1Node.position.z + 100)
         car1Node.position = newPosition
         
         
@@ -151,10 +151,13 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
             UIColor(red: 0, green: 0.423529, blue: 1, alpha: 0.4).setFill()
             UIRectFillUsingBlendMode(rectangle, CGBlendMode.normal)
             
-            print("(", boundingBox.minX, ",", boundingBox.minY, ")")
-            print("(", boundingBox.maxX, ",", boundingBox.maxY, ")")
+            let realDistance = 1.8537/Float(boundingBox.height) //расстояние в метрах
+            
+            //print("(", boundingBox.minX, ",", boundingBox.minY, ")")
+            //print("(", boundingBox.maxX, ",", boundingBox.maxY, ")")
             print(boundingBox.height)
-            print(boundingBox.width)
+            //print(boundingBox.width)
+            print("Distance: ", realDistance, " m")
         }
         
         let newImage = UIGraphicsGetImageFromCurrentImageContext()

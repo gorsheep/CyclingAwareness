@@ -14,11 +14,18 @@ import ImageIO
 class ViewController: UIViewController, UINavigationControllerDelegate {
     
     //Адрес изображения на локальном сервере
-    let imageURl = "http://172.20.10.2:8080/1.PNG"
+    let imageURl = "http://172.20.10.2:8080/4.PNG"
     
     //Переменные объектов
     var bicycleNode:SCNNode!
     var car1Node:SCNNode!
+    var car2Node:SCNNode!
+    var car3Node:SCNNode!
+    var car4Node:SCNNode!
+    var car5Node:SCNNode!
+    
+    //Массив машин
+    var cars: [SCNNode] = []
 
     //Аутлеты UI элементов
     @IBOutlet weak var sceneView: SCNView?
@@ -40,11 +47,32 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         //Привязываем объекты к их переменным
         bicycleNode = myScene.rootNode.childNode(withName: "Bicycle", recursively: true)
         car1Node    = myScene.rootNode.childNode(withName: "Car", recursively: true)
+        car2Node    = myScene.rootNode.childNode(withName: "Car2", recursively: true)
+        car3Node    = myScene.rootNode.childNode(withName: "Car3", recursively: true)
+        car4Node    = myScene.rootNode.childNode(withName: "Car4", recursively: true)
+        car5Node    = myScene.rootNode.childNode(withName: "Car5", recursively: true)
+        
+        //Заполняем массив переменных-машин
+        cars.append(car1Node)
+        cars.append(car2Node)
+        cars.append(car3Node)
+        cars.append(car4Node)
+        cars.append(car5Node)
+        
+        //Итерируем по массиву машин
+        for car in cars {
+            //Изначально прячем машины
+            car.isHidden = true
+        }
+        
+        //Обращение к i-той машине
+        //print("Global Coordinates: ", cars[4].simdWorldPosition as Any)
+        
         
         
         //Выводим в консоль координаты машины
-        print(car1Node.simdWorldPosition)  //в глобальной СК
-        print(car1Node.position)           //в локальной СК
+        //print(car1Node.simdWorldPosition)  //в глобальной СК
+        //print(car1Node.position)           //в локальной СК
         
         //Прячем машину
         //car1Node.isHidden = true
@@ -78,12 +106,12 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         
         
         //Обновляем позицию машины
-        let newPosition = SCNVector3(x: 0, y: 0, z: car1Node.position.z + 100)
-        car1Node.position = newPosition
+        //let newPosition = SCNVector3(x: 0, y: 0, z: cars[4].position.z + 1000/3)
+        //cars[4].position = newPosition
         
         //Выводим в консоль координаты машины
-        print(car1Node.simdWorldPosition)  //в глобальной СК
-        print(car1Node.position)           //в локальной СК
+        //print(car5Node.simdWorldPosition)  //в глобальной СК
+        //print(car5Node.position)           //в локальной СК
         
         
         //Захватываем изображение по HTTP
@@ -143,7 +171,12 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         UIGraphicsBeginImageContextWithOptions(imageSize, false, scale)
 
         image.draw(at: CGPoint.zero)
-
+        
+        //Итератор для машин
+        var i = 0
+        
+        
+        //Цикл, итерирующий по распознанным объектам
         for detection in detections {
             
             print(detection.labels.map({"\($0.identifier) confidence: \($0.confidence)"}).joined(separator: "\n"))
@@ -155,13 +188,21 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
             UIColor(red: 0, green: 0.423529, blue: 1, alpha: 0.4).setFill()
             UIRectFillUsingBlendMode(rectangle, CGBlendMode.normal)
             
-            let realDistance = 1.8537/Float(boundingBox.height) //расстояние в метрах
             
-            //print("(", boundingBox.minX, ",", boundingBox.minY, ")")
-            //print("(", boundingBox.maxX, ",", boundingBox.maxY, ")")
-            print(boundingBox.height)
-            //print(boundingBox.width)
-            print("Distance: ", realDistance, " m")
+            //Рассчитываем положение машины
+            let realDistance = 1.8537/Float(boundingBox.height) //расстояние до машины в метрах
+            let xPosition = -1.8*(Float(boundingBox.midX)-0.5)  //X-координата автомобиля в глобальной СК
+            let zPosition = -6.55+0.17*realDistance             //Z-координата автомобиля в глобальной СК
+            
+            //Помещаем машину в нужное место
+            cars[i].worldPosition.x = xPosition
+            cars[i].worldPosition.z = zPosition
+            
+            //Показываем машину
+            cars[i].isHidden = false
+            
+            //Инкремент итератора машин
+            i = i+1
         }
         
         let newImage = UIGraphicsGetImageFromCurrentImageContext()

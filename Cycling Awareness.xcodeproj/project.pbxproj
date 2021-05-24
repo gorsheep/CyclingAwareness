@@ -19,9 +19,13 @@
 		651ECB322659B0400030C397 /* Road Sign Object Detector 1.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 651ECB312659B0400030C397 /* Road Sign Object Detector 1.mlmodel */; };
 		651ECB34265A4A970030C397 /* Main Scene.scn in Resources */ = {isa = PBXBuildFile; fileRef = 651ECB33265A4A970030C397 /* Main Scene.scn */; };
 		6566A698265A6E7C00919249 /* White Box.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 6566A697265A6E7C00919249 /* White Box.jpg */; };
-		6566A69A265AD5F200919249 /* Car_1.scn in Resources */ = {isa = PBXBuildFile; fileRef = 6566A699265AD5F200919249 /* Car_1.scn */; };
 		6566A69E265ADDBF00919249 /* Bicycle.scn in Resources */ = {isa = PBXBuildFile; fileRef = 6566A69D265ADDBF00919249 /* Bicycle.scn */; };
 		6566A6A0265B90DC00919249 /* CarsDetectorV1 1.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 6566A69F265B90DC00919249 /* CarsDetectorV1 1.mlmodel */; };
+		658314FF265BF54D0030833C /* Car_2.scn in Resources */ = {isa = PBXBuildFile; fileRef = 658314FE265BF54D0030833C /* Car_2.scn */; };
+		65831503265BF5AE0030833C /* Car_1.scn in Resources */ = {isa = PBXBuildFile; fileRef = 65831502265BF5AE0030833C /* Car_1.scn */; };
+		65831505265BF5DF0030833C /* Car_3.scn in Resources */ = {isa = PBXBuildFile; fileRef = 65831504265BF5DF0030833C /* Car_3.scn */; };
+		65831507265BF8AA0030833C /* Car_4.scn in Resources */ = {isa = PBXBuildFile; fileRef = 65831506265BF8AA0030833C /* Car_4.scn */; };
+		65831509265BF8B10030833C /* Car_5.scn in Resources */ = {isa = PBXBuildFile; fileRef = 65831508265BF8B10030833C /* Car_5.scn */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,9 +64,13 @@
 		651ECB312659B0400030C397 /* Road Sign Object Detector 1.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = "Road Sign Object Detector 1.mlmodel"; sourceTree = "<group>"; };
 		651ECB33265A4A970030C397 /* Main Scene.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "Main Scene.scn"; sourceTree = "<group>"; };
 		6566A697265A6E7C00919249 /* White Box.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "White Box.jpg"; sourceTree = "<group>"; };
-		6566A699265AD5F200919249 /* Car_1.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = Car_1.scn; sourceTree = "<group>"; };
 		6566A69D265ADDBF00919249 /* Bicycle.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = Bicycle.scn; sourceTree = "<group>"; };
 		6566A69F265B90DC00919249 /* CarsDetectorV1 1.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = "CarsDetectorV1 1.mlmodel"; sourceTree = "<group>"; };
+		658314FE265BF54D0030833C /* Car_2.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = Car_2.scn; sourceTree = "<group>"; };
+		65831502265BF5AE0030833C /* Car_1.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = Car_1.scn; sourceTree = "<group>"; };
+		65831504265BF5DF0030833C /* Car_3.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = Car_3.scn; sourceTree = "<group>"; };
+		65831506265BF8AA0030833C /* Car_4.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = Car_4.scn; sourceTree = "<group>"; };
+		65831508265BF8B10030833C /* Car_5.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = Car_5.scn; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -150,8 +158,12 @@
 			isa = PBXGroup;
 			children = (
 				651ECB33265A4A970030C397 /* Main Scene.scn */,
+				65831502265BF5AE0030833C /* Car_1.scn */,
+				658314FE265BF54D0030833C /* Car_2.scn */,
+				65831504265BF5DF0030833C /* Car_3.scn */,
+				65831506265BF8AA0030833C /* Car_4.scn */,
+				65831508265BF8B10030833C /* Car_5.scn */,
 				6566A69D265ADDBF00919249 /* Bicycle.scn */,
-				6566A699265AD5F200919249 /* Car_1.scn */,
 				6566A697265A6E7C00919249 /* White Box.jpg */,
 			);
 			path = "Graphic Assets";
@@ -260,12 +272,16 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65831507265BF8AA0030833C /* Car_4.scn in Resources */,
 				6566A69E265ADDBF00919249 /* Bicycle.scn in Resources */,
+				65831503265BF5AE0030833C /* Car_1.scn in Resources */,
 				651ECB0E2659AFC70030C397 /* LaunchScreen.storyboard in Resources */,
+				658314FF265BF54D0030833C /* Car_2.scn in Resources */,
 				651ECB0B2659AFC70030C397 /* Assets.xcassets in Resources */,
-				6566A69A265AD5F200919249 /* Car_1.scn in Resources */,
+				65831505265BF5DF0030833C /* Car_3.scn in Resources */,
 				651ECB062659AFC60030C397 /* Main.storyboard in Resources */,
 				6566A698265A6E7C00919249 /* White Box.jpg in Resources */,
+				65831509265BF8B10030833C /* Car_5.scn in Resources */,
 				651ECB34265A4A970030C397 /* Main Scene.scn in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

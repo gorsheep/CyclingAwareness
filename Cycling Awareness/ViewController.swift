@@ -14,7 +14,7 @@ import ImageIO
 class ViewController: UIViewController, UINavigationControllerDelegate {
     
     //Адрес изображения на локальном сервере
-    let imageURl = "http://172.20.10.2:8080/4.PNG"
+    var imageURl = "http://172.20.10.2:8080/4.PNG"
     
     //Переменные объектов
     var bicycleNode:SCNNode!
@@ -24,12 +24,22 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     var car4Node:SCNNode!
     var car5Node:SCNNode!
     
+    //Количество машин в сцене
+    let carsInScene = 5
+
+    //Текущее количество машин в сцене
+    var curNumOfCars = 0
+    
     //Массив машин
     var cars: [SCNNode] = []
 
     //Аутлеты UI элементов
     @IBOutlet weak var sceneView: SCNView?
     @IBOutlet weak var newImageView: UIImageView?
+    
+    //Переменные для переключения между картинками
+    var img = 0
+    var imgIterator = 0
     
     
     //Функция, которая выполняется, когда приложение запускается
@@ -113,11 +123,28 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         //print(car5Node.simdWorldPosition)  //в глобальной СК
         //print(car5Node.position)           //в локальной СК
         
+        //Обновляем переменные для переключения изображения
+        imgIterator = imgIterator+1
+        img = imgIterator%4 //[0,3]
+        
+        switch img {
+        case 0:
+            imageURl = "http://172.20.10.2:8080/1.PNG"
+        case 1:
+            imageURl = "http://172.20.10.2:8080/2.PNG"
+        case 2:
+            imageURl = "http://172.20.10.2:8080/3.PNG"
+        case 3:
+            imageURl = "http://172.20.10.2:8080/4.PNG"
+        default:
+            imageURl = "http://172.20.10.2:8080/4.PNG"
+        }
         
         //Захватываем изображение по HTTP
         guard let url = URL(string: imageURl)else {
             return
         }
+        
         DispatchQueue.global().async { [weak self] in
             if let data = try? Data(contentsOf: url) {
                 if let image = UIImage(data: data) {
@@ -172,6 +199,21 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
 
         image.draw(at: CGPoint.zero)
         
+        //Число машин в кадре
+        let numCars = detections.count
+        print("Число машин в кадре: ", numCars)
+        
+        //Если в кадре машин (numCars) меньше, чем машин сейчас в сцене (curNumOfCars), то скрываем лишние машины
+        if (numCars < curNumOfCars) {
+            let carsToHide = curNumOfCars - numCars //сколько машин надо спрятать
+            for index in 1...carsToHide {
+                cars[curNumOfCars - index].isHidden = true
+            }
+        }
+        
+        //Запоминаем на будущее, сколько машин было в текущем изображении (чтобы потом скрыть лишние)
+        curNumOfCars = numCars
+        
         //Итератор для машин
         var i = 0
         
@@ -189,20 +231,24 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
             UIRectFillUsingBlendMode(rectangle, CGBlendMode.normal)
             
             
-            //Рассчитываем положение машины
-            let realDistance = 1.8537/Float(boundingBox.height) //расстояние до машины в метрах
-            let xPosition = -1.8*(Float(boundingBox.midX)-0.5)  //X-координата автомобиля в глобальной СК
-            let zPosition = -6.55+0.17*realDistance             //Z-координата автомобиля в глобальной СК
+            //Если на изображении больше чем 5 машин, то не рисуем то, чего нет
+            if (i <= 4) {
+                //Рассчитываем положение машины
+                let realDistance = 1.8537/Float(boundingBox.height) //расстояние до машины в метрах
+                let xPosition = -1.8*(Float(boundingBox.midX)-0.5)  //X-координата автомобиля в глобальной СК
+                let zPosition = -6.55+0.17*realDistance             //Z-координата автомобиля в глобальной СК
+                
+                //Помещаем машину в нужное место
+                cars[i].worldPosition.x = xPosition
+                cars[i].worldPosition.z = zPosition
+                
+                //Показываем машину
+                cars[i].isHidden = false
+                
+                //Инкремент итератора машин
+                i = i+1
+            }//end of if-statement
             
-            //Помещаем машину в нужное место
-            cars[i].worldPosition.x = xPosition
-            cars[i].worldPosition.z = zPosition
-            
-            //Показываем машину
-            cars[i].isHidden = false
-            
-            //Инкремент итератора машин
-            i = i+1
         }
         
         let newImage = UIGraphicsGetImageFromCurrentImageContext()

@@ -28,22 +28,16 @@
                                     <action selector="testPhotoWithSender:" destination="BYZ-38-t0r" eventType="touchUpInside" id="aiU-bV-coV"/>
                                 </connections>
                             </button>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6Er-Qh-H3C">
-                                <rect key="frame" x="0.0" y="44" width="380" height="414"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="6Er-Qh-H3C" secondAttribute="height" multiplier="1:1" id="5KH-vX-vYA"/>
-                                </constraints>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="EJq-6u-dO9">
+                                <rect key="frame" x="0.0" y="109" width="381" height="236"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <constraints>
-                            <constraint firstItem="6Er-Qh-H3C" firstAttribute="width" secondItem="6Er-Qh-H3C" secondAttribute="height" multiplier="1:1" id="STU-PZ-naz"/>
-                            <constraint firstItem="6Er-Qh-H3C" firstAttribute="width" secondItem="6Er-Qh-H3C" secondAttribute="height" multiplier="1:1" id="eWG-lR-SHo"/>
-                        </constraints>
                     </view>
                     <connections>
-                        <outlet property="photoImageView" destination="6Er-Qh-H3C" id="F3U-jZ-d6J"/>
+                        <outlet property="newImageView" destination="EJq-6u-dO9" id="9md-Hv-fnx"/>
                         <outlet property="sceneView" destination="KgX-pR-rHR" id="26U-Mg-vAp"/>
                     </connections>
                 </viewController>

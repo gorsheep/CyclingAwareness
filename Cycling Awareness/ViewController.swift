@@ -14,16 +14,15 @@ import ImageIO
 class ViewController: UIViewController, UINavigationControllerDelegate {
     
     //Адрес изображения на локальном сервере
-    let imageURl = "http://172.20.10.2:8080/picture.jpg"
+    let imageURl = "http://172.20.10.2:8080/1.PNG"
     
     //Переменные объектов
     var bicycleNode:SCNNode!
     var car1Node:SCNNode!
 
     //Аутлеты UI элементов
-    @IBOutlet weak var photoImageView: UIImageView?
     @IBOutlet weak var sceneView: SCNView?
-    
+    @IBOutlet weak var newImageView: UIImageView?
     
     
     //Функция, которая выполняется, когда приложение запускается
@@ -59,7 +58,8 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     
     lazy var detectionRequest: VNCoreMLRequest = {
         do {
-            let model = try VNCoreMLModel(for: Road_Sign_Object_Detector_1().model)
+            //let model = try VNCoreMLModel(for: Road_Sign_Object_Detector_1().model) //модель со знаками
+            let model = try VNCoreMLModel(for: CarsDetectorV1_1().model) //модель с машинами
             
             let request = VNCoreMLRequest(model: model, completionHandler: { [weak self] request, error in
                 self?.processDetections(for: request, error: error)
@@ -94,7 +94,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
                     self?.updateDetections(for: image)
                     DispatchQueue.main.async {
                         //Вызываем функцию, которая выводит изображение на экран
-                        self?.photoImageView?.image = image
+                        self?.newImageView?.image = image
                     }
                 }
             }
@@ -130,12 +130,12 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     }
     
     func drawDetectionsOnPreview(detections: [VNRecognizedObjectObservation]) {
-        guard let image = self.photoImageView?.image else {
+        guard let image = self.newImageView?.image else {
             return
         }
         
         let imageSize = image.size
-        let scale: CGFloat = 0
+        let scale: CGFloat = 1
         UIGraphicsBeginImageContextWithOptions(imageSize, false, scale)
 
         image.draw(at: CGPoint.zero)
@@ -159,7 +159,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         
         let newImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
-        self.photoImageView?.image = newImage
+        self.newImageView?.image = newImage
     }
     
     

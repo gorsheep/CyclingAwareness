@@ -21,6 +21,7 @@
 		6566A698265A6E7C00919249 /* White Box.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 6566A697265A6E7C00919249 /* White Box.jpg */; };
 		6566A69A265AD5F200919249 /* Car_1.scn in Resources */ = {isa = PBXBuildFile; fileRef = 6566A699265AD5F200919249 /* Car_1.scn */; };
 		6566A69E265ADDBF00919249 /* Bicycle.scn in Resources */ = {isa = PBXBuildFile; fileRef = 6566A69D265ADDBF00919249 /* Bicycle.scn */; };
+		6566A6A0265B90DC00919249 /* CarsDetectorV1 1.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 6566A69F265B90DC00919249 /* CarsDetectorV1 1.mlmodel */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +62,7 @@
 		6566A697265A6E7C00919249 /* White Box.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "White Box.jpg"; sourceTree = "<group>"; };
 		6566A699265AD5F200919249 /* Car_1.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = Car_1.scn; sourceTree = "<group>"; };
 		6566A69D265ADDBF00919249 /* Bicycle.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = Bicycle.scn; sourceTree = "<group>"; };
+		6566A69F265B90DC00919249 /* CarsDetectorV1 1.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = "CarsDetectorV1 1.mlmodel"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +114,7 @@
 			isa = PBXGroup;
 			children = (
 				651ECB312659B0400030C397 /* Road Sign Object Detector 1.mlmodel */,
+				6566A69F265B90DC00919249 /* CarsDetectorV1 1.mlmodel */,
 				651ECAFE2659AFC60030C397 /* AppDelegate.swift */,
 				651ECB002659AFC60030C397 /* SceneDelegate.swift */,
 				651ECB022659AFC60030C397 /* ViewController.swift */,
@@ -291,6 +294,7 @@
 				651ECB032659AFC60030C397 /* ViewController.swift in Sources */,
 				651ECAFF2659AFC60030C397 /* AppDelegate.swift in Sources */,
 				651ECB012659AFC60030C397 /* SceneDelegate.swift in Sources */,
+				6566A6A0265B90DC00919249 /* CarsDetectorV1 1.mlmodel in Sources */,
 				651ECB322659B0400030C397 /* Road Sign Object Detector 1.mlmodel in Sources */,
 				651ECB092659AFC60030C397 /* Cycling_Awareness.xcdatamodeld in Sources */,
 			);

@@ -114,6 +114,8 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     @IBAction func testPhoto(sender: UIButton) {
         print("PEPEGA")
         
+        //Запускаем таймер
+        let begin = clock()
         
         //Обновляем позицию машины
         //let newPosition = SCNVector3(x: 0, y: 0, z: cars[4].position.z + 1000/3)
@@ -159,6 +161,9 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
             }
         }
         
+        //Выводим время, которое ушло на выполнение функции
+        let diff = Double(clock() - begin) / Double(CLOCKS_PER_SEC)
+        print("Elapsed time: ", diff, " seconds")
     }
     
     private func updateDetections(for image: UIImage) {

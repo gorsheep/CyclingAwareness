@@ -14,7 +14,9 @@ import ImageIO
 class ViewController: UIViewController, UINavigationControllerDelegate {
     
     //Адрес изображения на локальном сервере
-    var imageURl = "http://172.20.10.2:8080/4.PNG"
+    //Ноут на винде имеет адрес   172.20.10.2
+    //Мой любимый мак имеет адрес 172.20.10.4
+    var imageURl = "http://172.20.10.4:8080/frame.jpg"
     
     //Переменные объектов
     var bicycleNode:SCNNode!
@@ -45,6 +47,9 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     //Функция, которая выполняется, когда приложение запускается
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //Создаём таймер для цикла, в котором будем обрабатывать изображения
+        let timer = Timer.scheduledTimer(timeInterval: 0.15, target: self, selector: #selector(cycle), userInfo: nil, repeats: true)
         
         //Устанавливаем режим сглаживания (antialiasing)
         sceneView?.antialiasingMode = SCNAntialiasingMode.multisampling4X
@@ -110,11 +115,33 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     }()
     
     
+    //Функция, которая исполняется циклически по таймеру
+    @objc func cycle()
+    {
+        //Захватываем изображение по HTTP
+        guard let url = URL(string: imageURl)else {return}
+        
+        DispatchQueue.global().async { [weak self] in
+            if let data = try? Data(contentsOf: url) {
+                if let image = UIImage(data: data) {
+                    
+                    //Вызываем функию обработки полученного изображения
+                    self?.updateDetections(for: image)
+                    DispatchQueue.main.async {
+                        //Вызываем функцию, которая выводит изображение на экран
+                        self?.newImageView?.image = image
+                    }
+                }
+            }
+        }
+    }
+    
+    
     //Функция, которая исполняется по нажатии на кнопку
     @IBAction func testPhoto(sender: UIButton) {
         print("PEPEGA")
         
-        //Запускаем таймер
+        //Запускаем таймер для расчёта времени, которое уходит на обработку изображения
         let begin = clock()
         
         //Обновляем позицию машины
@@ -131,15 +158,15 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         
         switch img {
         case 0:
-            imageURl = "http://172.20.10.2:8080/1.PNG"
+            imageURl = "http://172.20.10.4:8080/frame.jpg"
         case 1:
-            imageURl = "http://172.20.10.2:8080/2.PNG"
+            imageURl = "http://172.20.10.4:8080/frame.jpg"
         case 2:
-            imageURl = "http://172.20.10.2:8080/3.PNG"
+            imageURl = "http://172.20.10.4:8080/frame.jpg"
         case 3:
-            imageURl = "http://172.20.10.2:8080/4.PNG"
+            imageURl = "http://172.20.10.4:8080/frame.jpg"
         default:
-            imageURl = "http://172.20.10.2:8080/4.PNG"
+            imageURl = "http://172.20.10.4:8080/frame.jpg"
         }
         
         //Захватываем изображение по HTTP
@@ -165,6 +192,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         let diff = Double(clock() - begin) / Double(CLOCKS_PER_SEC)
         print("Elapsed time: ", diff, " seconds")
     }
+    
     
     private func updateDetections(for image: UIImage) {
 

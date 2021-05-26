@@ -18,6 +18,9 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     //Мой любимый мак имеет адрес 172.20.10.4
     var imageURl = "http://172.20.10.4:8080/frame.jpg"
     
+    //Период основного цикла, секунд
+    let cycleLength = 1
+    
     //Переменные объектов
     var bicycleNode:SCNNode!
     var car1Node:SCNNode!
@@ -49,7 +52,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         super.viewDidLoad()
         
         //Создаём таймер для цикла, в котором будем обрабатывать изображения
-        let timer = Timer.scheduledTimer(timeInterval: 0.15, target: self, selector: #selector(cycle), userInfo: nil, repeats: true)
+        let timer = Timer.scheduledTimer(timeInterval: TimeInterval(cycleLength), target: self, selector: #selector(cycle), userInfo: nil, repeats: true)
         
         //Устанавливаем режим сглаживания (antialiasing)
         sceneView?.antialiasingMode = SCNAntialiasingMode.multisampling4X
@@ -93,8 +96,6 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         //car1Node.isHidden = true
         //Показываем машину
         //car1Node.isHidden = false
-        
-        
     }
  
     
@@ -118,8 +119,21 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     //Функция, которая исполняется циклически по таймеру
     @objc func cycle()
     {
+        /*
+        //Video capture area
+        if (imgIterator == 0) {
+            //sleep(10)
+        }
+        
+        imgIterator = imgIterator+1
+        if (imgIterator < 860) {
+            imageURl = "http://172.20.10.4:8080/Video/Frames-1/frame-" + String(imgIterator) + ".jpg"
+        }
+        */
+        
+        
         //Захватываем изображение по HTTP
-        guard let url = URL(string: imageURl)else {return}
+        guard let url = URL(string: imageURl) else {return}
         
         DispatchQueue.global().async { [weak self] in
             if let data = try? Data(contentsOf: url) {
@@ -170,9 +184,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
         }
         
         //Захватываем изображение по HTTP
-        guard let url = URL(string: imageURl)else {
-            return
-        }
+        guard let url = URL(string: imageURl) else {return}
         
         DispatchQueue.global().async { [weak self] in
             if let data = try? Data(contentsOf: url) {
@@ -212,7 +224,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate {
     private func processDetections(for request: VNRequest, error: Error?) {
         DispatchQueue.main.async {
             guard let results = request.results else {
-                print("Unable to detect anything.\n\(error!.localizedDescription)")
+                //print("Unable to detect anything.\n\(error!.localizedDescription)")
                 return
             }
         

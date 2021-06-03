@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -21,6 +21,7 @@
 		6566A698265A6E7C00919249 /* White Box.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 6566A697265A6E7C00919249 /* White Box.jpg */; };
 		6566A69E265ADDBF00919249 /* Bicycle.scn in Resources */ = {isa = PBXBuildFile; fileRef = 6566A69D265ADDBF00919249 /* Bicycle.scn */; };
 		6566A6A0265B90DC00919249 /* CarsDetectorV1 1.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 6566A69F265B90DC00919249 /* CarsDetectorV1 1.mlmodel */; };
+		6573C2B5266954D700E5C49E /* CocoaAsyncSocket in Frameworks */ = {isa = PBXBuildFile; productRef = 6573C2B4266954D700E5C49E /* CocoaAsyncSocket */; };
 		658314FF265BF54D0030833C /* Car_2.scn in Resources */ = {isa = PBXBuildFile; fileRef = 658314FE265BF54D0030833C /* Car_2.scn */; };
 		65831503265BF5AE0030833C /* Car_1.scn in Resources */ = {isa = PBXBuildFile; fileRef = 65831502265BF5AE0030833C /* Car_1.scn */; };
 		65831505265BF5DF0030833C /* Car_3.scn in Resources */ = {isa = PBXBuildFile; fileRef = 65831504265BF5DF0030833C /* Car_3.scn */; };
@@ -78,6 +79,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6573C2B5266954D700E5C49E /* CocoaAsyncSocket in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -185,6 +187,9 @@
 			dependencies = (
 			);
 			name = "Cycling Awareness";
+			packageProductDependencies = (
+				6573C2B4266954D700E5C49E /* CocoaAsyncSocket */,
+			);
 			productName = "Cycling Awareness";
 			productReference = 651ECAFB2659AFC60030C397 /* Cycling Awareness.app */;
 			productType = "com.apple.product-type.application";
@@ -256,6 +261,9 @@
 				Base,
 			);
 			mainGroup = 651ECAF22659AFC60030C397;
+			packageReferences = (
+				6573C2B3266954D700E5C49E /* XCRemoteSwiftPackageReference "CocoaAsyncSocket" */,
+			);
 			productRefGroup = 651ECAFC2659AFC60030C397 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -645,6 +653,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		6573C2B3266954D700E5C49E /* XCRemoteSwiftPackageReference "CocoaAsyncSocket" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/robbiehanson/CocoaAsyncSocket";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.6.5;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		6573C2B4266954D700E5C49E /* CocoaAsyncSocket */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6573C2B3266954D700E5C49E /* XCRemoteSwiftPackageReference "CocoaAsyncSocket" */;
+			productName = CocoaAsyncSocket;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		651ECB072659AFC60030C397 /* Cycling_Awareness.xcdatamodeld */ = {

@@ -17,11 +17,12 @@ class ViewController: UIViewController, UINavigationControllerDelegate, GCDAsync
     //Аутлеты UI элементов
     @IBOutlet weak var sceneView: SCNView?
     @IBOutlet weak var newImageView: UIImageView?
+    @IBOutlet weak var labelField2: UILabel?
     
     //Параметры UDP обмена
     var socket : GCDAsyncUdpSocket?
     let PORT : UInt16 = 14000           //порт UDP-сокета
-    let IP = "172.20.10.1"              //адрес айфона
+    var IP = ""                         //адрес айфона (определяется в функции viewDidLoad())
     let bufferSize = 8192               //длина буфера (одного UDP-пакета)
     let headerSize = 5                  //длина заголовка, в котором хранится ожидаемое количество пакетов
     var imageData : Data? = "".data(using: .utf8)  //сюда будет записываться изображение (оно передаётся пакетами по bufferSize байт)
@@ -29,6 +30,8 @@ class ViewController: UIViewController, UINavigationControllerDelegate, GCDAsync
     var numOfPackets  = 0               //ожидаемое число пакетов
     var waitingForFirstPacket = true    //флаг того, что мы ждём пакет с заголовком
     var badFramesCounter = 0            //отладочная переменная
+    var startTime = Date()              //отладочная переменная
+    var frameCounter = 0                //отладочная переменная
     
     //Период основного цикла, секунд
     let cycleLength = 1
@@ -61,7 +64,11 @@ class ViewController: UIViewController, UINavigationControllerDelegate, GCDAsync
         super.viewDidLoad()
         
         //Создаём таймер для цикла, в котором будем обрабатывать изображения
-        let timer = Timer.scheduledTimer(timeInterval: TimeInterval(cycleLength), target: self, selector: #selector(cycle), userInfo: nil, repeats: true)
+        //let timer = Timer.scheduledTimer(timeInterval: TimeInterval(cycleLength), target: self, selector: #selector(cycle), userInfo: nil, repeats: true)
+        
+        //Узнаём IP адрес айфона
+        IP = getWiFiAddress()!
+        print("IP: ", IP)
         
         //Создаём UDP-сокет
         let socket = GCDAsyncUdpSocket(delegate: self, delegateQueue: DispatchQueue.main)
@@ -296,12 +303,18 @@ class ViewController: UIViewController, UINavigationControllerDelegate, GCDAsync
             //Создаём изображение
             if let image = UIImage(data: imageData!) {
                 //Вызываем функию обработки полученного изображения
-                self.updateDetections(for: image)
+                //self.updateDetections(for: image)
                 DispatchQueue.main.async {
                     //Вызываем функцию, которая выводит изображение на экран
                     self.newImageView?.image = image
                 }
             }
+            
+            //Выводим FPS
+            let currentTime = Date()
+            frameCounter += 1
+            let averageFPS = Double(frameCounter)/(DateInterval(start: startTime, end: currentTime).duration)
+            labelField2?.text = "Average FPS: " + String(averageFPS)
             
             return;
         }
@@ -312,7 +325,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate, GCDAsync
             imageData!.append(data)
         }else{
             badFramesCounter += 1
-            //print("Битый кадр!")
+            print("Битый кадр!")
             //print("badFramesCounter: ", badFramesCounter)
             //labelField?.text = "badFramesCounter: " + String(badFramesCounter)
             //Очищаем буфер для изображения
@@ -323,5 +336,45 @@ class ViewController: UIViewController, UINavigationControllerDelegate, GCDAsync
         
     }//end of function udpSocket()
     
+ 
+    
+    //Функция, которая возвращает IP адрес устройства (айфона)
+    func getWiFiAddress() -> String? {
+        var address : String?
+
+        //Получаем список всех сетевых интерфейсорв устройства
+        var ifaddr : UnsafeMutablePointer<ifaddrs>?
+        guard getifaddrs(&ifaddr) == 0 else { return nil }
+        guard let firstAddr = ifaddr else { return nil }
+
+        //Цикл по каждому интерфейсу
+        for ifptr in sequence(first: firstAddr, next: { $0.pointee.ifa_next }) {
+            let interface = ifptr.pointee
+
+            //Проверяем, что это IPv4 интерфейс
+            let addrFamily = interface.ifa_addr.pointee.sa_family
+            if addrFamily == UInt8(AF_INET) {
+
+                //Проверяем имя интерфейса (нас интересует интерфейс под названием "bridge100")
+                //en0 - видимо, это интерфейс для подключения айфона к другим устройствам
+                //bridge100 - интерфейс для подключения устройств к айфону в режиме модема
+                let name = String(cString: interface.ifa_name)
+                //print(name)
+                if  name == "bridge100" {
+                    //Конвертируем адрес интерфейса в человеческий вид
+                    var hostname = [CChar](repeating: 0, count: Int(NI_MAXHOST))
+                    getnameinfo(interface.ifa_addr, socklen_t(interface.ifa_addr.pointee.sa_len),
+                                &hostname, socklen_t(hostname.count),
+                                nil, socklen_t(0), NI_NUMERICHOST)
+                    address = String(cString: hostname)
+                    //print("Interface: ", name)
+                    //print("Address: ", address!)
+                }
+            }
+        }
+        freeifaddrs(ifaddr)
+
+        return address
+    }
     
 }

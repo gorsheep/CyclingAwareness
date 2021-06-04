@@ -63,6 +63,25 @@ class ViewController: UIViewController, UINavigationControllerDelegate, GCDAsync
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        //User defaults
+        //Если приложение ещё ни разу не запускалось, то мы не знаем имя Wi-Fi и пароль от Raspberry
+        //Соответственно, если knowsWIFI = 0 (а по умолчанию он 0), то мы узнаём (запрашиваем) у Raspberry адрес и пароль и сохраняем это в постоянную память
+        let defaults = UserDefaults.standard
+        let knowsWIFI = defaults.bool(forKey: "knowsWIFI")
+        let raspberryAddress  = defaults.string(forKey: "raspberryAddress")
+        let raspberryPassword = defaults.string(forKey: "raspberryPassword")
+    
+        //Если ещё не знаем имя Wi-Fi и пароль от Raspberry
+        if !knowsWIFI {
+            defaults.set(true, forKey: "knowsWIFI")
+            defaults.set("192.168.0.3", forKey: "raspberryAddress")  //на самом деле тут будет обмен по Bluetooth
+            defaults.set("qwerty12345", forKey: "raspberryPassword") //на самом деле тут будет обмен по Bluetooth
+        }else{
+            print(raspberryAddress ?? "No address yet")
+            print(raspberryPassword ?? "No password yet")
+        }
+        
+        
         //Создаём таймер для цикла, в котором будем обрабатывать изображения
         //let timer = Timer.scheduledTimer(timeInterval: TimeInterval(cycleLength), target: self, selector: #selector(cycle), userInfo: nil, repeats: true)
         
@@ -356,11 +375,11 @@ class ViewController: UIViewController, UINavigationControllerDelegate, GCDAsync
             if addrFamily == UInt8(AF_INET) {
 
                 //Проверяем имя интерфейса (нас интересует интерфейс под названием "bridge100")
-                //en0 - видимо, это интерфейс для подключения айфона к другим устройствам
+                //en0 - интерфейс для подключения айфона к другим устройствам
                 //bridge100 - интерфейс для подключения устройств к айфону в режиме модема
                 let name = String(cString: interface.ifa_name)
                 //print(name)
-                if  name == "bridge100" {
+                if  name == "en0" {
                     //Конвертируем адрес интерфейса в человеческий вид
                     var hostname = [CChar](repeating: 0, count: Int(NI_MAXHOST))
                     getnameinfo(interface.ifa_addr, socklen_t(interface.ifa_addr.pointee.sa_len),

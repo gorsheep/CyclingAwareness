@@ -23,7 +23,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate, GCDAsync
     var socket : GCDAsyncUdpSocket?
     let PORT : UInt16 = 14000           //порт UDP-сокета
     var IP = ""                         //адрес айфона (определяется в функции viewDidLoad())
-    let bufferSize = 8192               //длина буфера (одного UDP-пакета)
+    let bufferSize = 9216               //длина буфера (одного UDP-пакета)
     let headerSize = 5                  //длина заголовка, в котором хранится ожидаемое количество пакетов
     var imageData : Data? = "".data(using: .utf8)  //сюда будет записываться изображение (оно передаётся пакетами по bufferSize байт)
     var packetCounter = 0               //счётчик принятых пакетов
@@ -32,6 +32,9 @@ class ViewController: UIViewController, UINavigationControllerDelegate, GCDAsync
     var badFramesCounter = 0            //отладочная переменная
     var startTime = Date()              //отладочная переменная
     var frameCounter = 0                //отладочная переменная
+    
+    //Сокет на отправку
+    var outSocket : OutSocket!
     
     //Период основного цикла, секунд
     let cycleLength = 1
@@ -68,16 +71,16 @@ class ViewController: UIViewController, UINavigationControllerDelegate, GCDAsync
         //Соответственно, если knowsWIFI = 0 (а по умолчанию он 0), то мы узнаём (запрашиваем) у Raspberry адрес и пароль и сохраняем это в постоянную память
         let defaults = UserDefaults.standard
         let knowsWIFI = defaults.bool(forKey: "knowsWIFI")
-        let raspberryAddress  = defaults.string(forKey: "raspberryAddress")
+        let raspberryName  = defaults.string(forKey: "raspberryName")
         let raspberryPassword = defaults.string(forKey: "raspberryPassword")
     
         //Если ещё не знаем имя Wi-Fi и пароль от Raspberry
         if !knowsWIFI {
             defaults.set(true, forKey: "knowsWIFI")
-            defaults.set("192.168.0.3", forKey: "raspberryAddress")  //на самом деле тут будет обмен по Bluetooth
-            defaults.set("qwerty12345", forKey: "raspberryPassword") //на самом деле тут будет обмен по Bluetooth
+            defaults.set("RASPBERRY", forKey: "raspberryName")  //на самом деле тут будет обмен по Bluetooth
+            defaults.set("RASPBERRY", forKey: "raspberryPassword") //на самом деле тут будет обмен по Bluetooth
         }else{
-            print(raspberryAddress ?? "No address yet")
+            print(raspberryName ?? "No name yet")
             print(raspberryPassword ?? "No password yet")
         }
         
@@ -89,13 +92,20 @@ class ViewController: UIViewController, UINavigationControllerDelegate, GCDAsync
         IP = getWiFiAddress()!
         print("IP: ", IP)
         
-        //Создаём UDP-сокет
+        //Создаём UDP-сокет на приём
         let socket = GCDAsyncUdpSocket(delegate: self, delegateQueue: DispatchQueue.main)
         do {
             try socket.bind(toPort: PORT)
             try socket.enableBroadcast(true)
             try socket.beginReceiving()
         } catch _ as NSError { print("Issue with setting up listener") }
+        
+        //Инициируем сокет на отправку
+        outSocket = OutSocket()
+        outSocket.setupConnection {}
+        
+        //Шлём по UDP IP адрес айфона
+        outSocket.send(message: IP)
         
         //Устанавливаем режим сглаживания (antialiasing)
         sceneView?.antialiasingMode = SCNAntialiasingMode.multisampling4X
@@ -318,11 +328,12 @@ class ViewController: UIViewController, UINavigationControllerDelegate, GCDAsync
             imageData!.append(data)
             packetCounter = 0
             waitingForFirstPacket = true
-            
+            showImage()
+            /*
             //Создаём изображение
             if let image = UIImage(data: imageData!) {
                 //Вызываем функию обработки полученного изображения
-                //self.updateDetections(for: image)
+                self.updateDetections(for: image)
                 DispatchQueue.main.async {
                     //Вызываем функцию, которая выводит изображение на экран
                     self.newImageView?.image = image
@@ -334,7 +345,8 @@ class ViewController: UIViewController, UINavigationControllerDelegate, GCDAsync
             frameCounter += 1
             let averageFPS = Double(frameCounter)/(DateInterval(start: startTime, end: currentTime).duration)
             labelField2?.text = "Average FPS: " + String(averageFPS)
-            
+            */
+ 
             return;
         }
 
@@ -354,6 +366,34 @@ class ViewController: UIViewController, UINavigationControllerDelegate, GCDAsync
         }
         
     }//end of function udpSocket()
+    
+    
+    
+    //Функция вывода изображения на экран
+    func showImage() {
+        
+        //Выводим изображение на экран
+        if let image = UIImage(data: imageData!) {
+            /*
+            //Вызываем функию обработки полученного изображения
+            self.updateDetections(for: image)
+            */
+            DispatchQueue.main.async {
+                self.newImageView?.image = image //асинхронно выводим изображение на экран
+            }
+        }
+        
+        //Очищаем буфер для изображения
+        imageData = "".data(using: .utf8)
+        
+        
+        //Выводим FPS
+        let currentTime = Date()
+        frameCounter += 1
+        let averageFPS = Double(frameCounter)/(DateInterval(start: startTime, end: currentTime).duration)
+        labelField2?.text = "Average FPS: " + String(averageFPS)
+         
+    }
     
  
     
@@ -396,4 +436,42 @@ class ViewController: UIViewController, UINavigationControllerDelegate, GCDAsync
         return address
     }
     
+}
+
+
+
+class OutSocket: NSObject, GCDAsyncUdpSocketDelegate {
+    let IP = "192.168.4.1" //когда Raspberry в режиме точки доступа
+    //let IP = "10.0.1.9" //когда Raspberry подключена к Wi-Fi
+    let PORT:UInt16 = 5001
+    var socket:GCDAsyncUdpSocket!
+    override init(){
+        super.init()
+    }
+    func setupConnection(success:(()->())){
+        socket = GCDAsyncUdpSocket(delegate: self, delegateQueue:DispatchQueue.main)
+          do { try socket.bind(toPort: PORT)} catch { print("")}
+          do { try socket.connect(toHost:IP, onPort: PORT)} catch { print("joinMulticastGroup not proceed")}
+          do { try socket.beginReceiving()} catch { print("beginReceiving not proceed")}
+        success()
+    }
+    func send(message: String){
+        let data = message.data(using: String.Encoding.utf8)!
+        socket.send(data, withTimeout: 2, tag: 0)
+    }
+    //MARK:- GCDAsyncUdpSocketDelegate
+    func udpSocket(_ sock: GCDAsyncUdpSocket, didConnectToAddress address: Data) {
+        print("didConnectToAddress");
+    }
+    func udpSocket(_ sock: GCDAsyncUdpSocket, didNotConnect error: Error?) {
+        if let _error = error {
+            print("didNotConnect \(_error )")
+        }
+    }
+    func udpSocket(_ sock: GCDAsyncUdpSocket, didNotSendDataWithTag tag: Int, dueToError error: Error?) {
+          print("didNotSendDataWithTag")
+    }
+    func udpSocket(_ sock: GCDAsyncUdpSocket, didSendDataWithTag tag: Int) {
+        print("didSendDataWithTag")
+    }
 }

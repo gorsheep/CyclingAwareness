@@ -11,6 +11,8 @@ import SceneKit
 import CoreML
 import Vision
 import ImageIO
+import CoreBluetooth
+import NetworkExtension
 
 class ViewController: UIViewController, UINavigationControllerDelegate, GCDAsyncUdpSocketDelegate {
     
@@ -18,6 +20,18 @@ class ViewController: UIViewController, UINavigationControllerDelegate, GCDAsync
     @IBOutlet weak var sceneView: SCNView?
     @IBOutlet weak var newImageView: UIImageView?
     @IBOutlet weak var labelField2: UILabel?
+    
+    //User Defaults
+    let knowsWIFI = UserDefaults.standard.bool(forKey: "knowsWIFI")
+    let raspberryName  = UserDefaults.standard.string(forKey: "raspberryName")
+    let raspberryPassword = UserDefaults.standard.string(forKey: "raspberryPassword")
+    
+    //Bluetooth
+    var centralDevice: CBCentralManager! //центральное устройство (iPhone)
+    var peripheralDevice: CBPeripheral!  //периферийное устройство (Raspberry)
+    var name = ""                        //имя Wi-Fi сети, которое запрашивается по Bluetooth
+    var password = ""                    //пароль Wi-Fi сети, который запрашивается по Bluetooth
+    var finishedBluetooth = false        //флаг, который говорит о том, что обмен по Bluetooth был закончен
     
     //Параметры UDP обмена
     var socket : GCDAsyncUdpSocket?
@@ -66,19 +80,24 @@ class ViewController: UIViewController, UINavigationControllerDelegate, GCDAsync
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //User defaults
-        //Если приложение ещё ни разу не запускалось, то мы не знаем имя Wi-Fi и пароль от Raspberry
-        //Соответственно, если knowsWIFI = 0 (а по умолчанию он 0), то мы узнаём (запрашиваем) у Raspberry адрес и пароль и сохраняем это в постоянную память
-        let defaults = UserDefaults.standard
-        let knowsWIFI = defaults.bool(forKey: "knowsWIFI")
-        let raspberryName  = defaults.string(forKey: "raspberryName")
-        let raspberryPassword = defaults.string(forKey: "raspberryPassword")
+        //Обмен по Bluetooth
+        centralDevice = CBCentralManager(delegate: self, queue: nil) //инициализируем переменную центрального устройства
+    }
     
-        //Если ещё не знаем имя Wi-Fi и пароль от Raspberry
+    
+    
+    //Функция инициализации (вызывается по окончании обмена по Bluetooth)
+    func setup() {
+        print("Начинаю настройку")
+        
+        //Ждём, пока на устройстве запустится скрипт main.py
+        sleep(4)
+        
+        //При первом запуске приложения knowsWIFI = false, поэтому мы запоминаем имя сети и пароль, полученные при первом запуске приложения
         if !knowsWIFI {
-            defaults.set(true, forKey: "knowsWIFI")
-            defaults.set("RASPBERRY", forKey: "raspberryName")  //на самом деле тут будет обмен по Bluetooth
-            defaults.set("RASPBERRY", forKey: "raspberryPassword") //на самом деле тут будет обмен по Bluetooth
+            UserDefaults.standard.set(true, forKey: "knowsWIFI")
+            UserDefaults.standard.set(name, forKey: "raspberryName")
+            UserDefaults.standard.set(password, forKey: "raspberryPassword")
         }else{
             print(raspberryName ?? "No name yet")
             print(raspberryPassword ?? "No password yet")
@@ -102,7 +121,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate, GCDAsync
         
         //Инициируем сокет на отправку
         outSocket = OutSocket()
-        outSocket.setupConnection {}
+        outSocket.setupConnection {} //тут выводится системное окно "Разрешите подключаться..." тут надо фризить поток, и разморозить его, когда закончится setupConnection()
         
         //Шлём по UDP IP адрес айфона
         outSocket.send(message: IP)
@@ -136,10 +155,7 @@ class ViewController: UIViewController, UINavigationControllerDelegate, GCDAsync
             car.isHidden = true
         }
         
-        //Обращение к i-той машине
-        //print("Global Coordinates: ", cars[4].simdWorldPosition as Any)
     }
- 
     
     
     lazy var detectionRequest: VNCoreMLRequest = {
@@ -169,36 +185,6 @@ class ViewController: UIViewController, UINavigationControllerDelegate, GCDAsync
     //Функция, которая исполняется по нажатии на кнопку
     @IBAction func testPhoto(sender: UIButton) {
         print("PEPEGA")
-        
-        //Запускаем таймер для расчёта времени, которое уходит на обработку изображения
-        let begin = clock()
-        
-        //Обновляем переменные для переключения изображения
-        imgIterator = imgIterator+1
-        
-        let imageURl = "http://172.20.10.4:8080/Video/Frames-1/frame-" + String(imgIterator) + ".jpg"
-        
-        //Захватываем изображение по HTTP
-        guard let url = URL(string: imageURl) else {return}
-        
-        DispatchQueue.global().async { [weak self] in
-            if let data = try? Data(contentsOf: url) {
-                if let image = UIImage(data: data) {
-                    
-                    //Вызываем функию обработки полученного изображения
-                    self?.updateDetections(for: image)
-                    DispatchQueue.main.async {
-                        //Вызываем функцию, которая выводит изображение на экран
-                        self?.newImageView?.image = image
-                    }
-                }
-            }
-        }
-        
-        //Выводим время, которое ушло на выполнение функции
-        let diff = Double(clock() - begin) / Double(CLOCKS_PER_SEC)
-        print("Elapsed time: ", diff, " seconds")
-        
     }//end of function testPhoto()
     
     
@@ -437,6 +423,154 @@ class ViewController: UIViewController, UINavigationControllerDelegate, GCDAsync
     }
     
 }
+
+
+
+
+//Расширяем класс ViewController протоколом CBCentralManagerDelegate
+extension ViewController: CBCentralManagerDelegate {
+    
+    //Функция, которая определяет, что делать центральному устройству в разных состояниях
+    func centralManagerDidUpdateState(_ central: CBCentralManager) {
+        switch central.state {
+        case .unknown:
+            print ("central.state is unknown")
+        case .resetting:
+            print ("central.state is resetting")
+        case .unsupported:
+            print ("central.state is unsupported")
+        case .unauthorized:
+            print ("central.state is unauthorized")
+        case .poweredOff:
+            print ("central.state is poweredOff")
+        //Когда центральное устройство будет в состоянии poweredOn, оно будет делать следующее:
+        case .poweredOn:
+            print ("central.state is poweredOn")
+            print(ProcessInfo.processInfo.hostName) //эта строчка нужня для того, чтобы принудительно вызвать диалоговое окно с разрешением доступа к local network
+            centralDevice.scanForPeripherals(withServices: nil) //сканировать все устройства
+            //centralDevice.scanForPeripherals(withServices: [bodyCompositionUUID]) //сканировать все доступные вокруг устройства, которые имеют UUID сервис Body Composition (0x181B)
+
+        @unknown default:
+            break
+        }
+    }
+    
+    
+    //Функция, которая вызывается, когда центральное устройство обнаружило периферийное устройство
+    func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
+        print(peripheral)
+        //Если нашли Raspberry, то подключаемся к ней
+        if peripheral.name == "raspberrypi" {       //ЗАМЕНИТЬ НА ПОИСК ПО КОНКРЕТНОМУ СЕРВИСУ
+            print("Устройство обнаружено")
+            peripheralDevice = peripheral       //инициализируем переменную периферийного устройства
+            peripheralDevice.delegate = self    //делегируем данный протокол периферийному устройству
+            centralDevice.stopScan()            //прекращаем поиск периферийных устройств
+            centralDevice.connect(peripheralDevice, options: nil) //подключаемся к устройству
+        }
+    }
+    
+    
+    //Функция, которая вызывается, когда центральное устройство подключилось к периферийному устройству
+    func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
+        print("Соединение установлено")
+        peripheralDevice.discoverServices(nil) //запрашиваем список всех сервисов
+        //peripheralDevice.discoverServices([bodyCompositionUUID]) //запрашиваем конкретный сервис
+    }
+    
+    
+}
+
+
+
+
+//Расширяем класс ViewController протоколом CBPeripheralDelegate
+extension ViewController: CBPeripheralDelegate {
+    
+    //Функция, которая вызывается, когда периферийное устройство передало список сервисов
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
+        guard let services = peripheral.services else { return }
+
+        for service in services {
+            print(service)
+            peripheral.discoverCharacteristics(nil, for: service) //запрашиваем характеристики сервиса
+        }
+    }
+    
+    
+    //Функция, которая вызывается, когда периферийное устройство передало список характеристик сервиса
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
+            guard let characteristics = service.characteristics else { return }
+            for characteristic in characteristics {
+                print(characteristic)
+                peripheral.readValue(for: characteristic) //считываем значение (value) характеристики
+            }
+    }
+    
+    
+    //Функция, которая вызывается, когда периферийное устройство передало значение (value) характеристики
+    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic,
+                    error: Error?) {
+        //print(characteristic.value ?? "no value")
+        guard let data = characteristic.value ?? nil else { return }
+        let str = String(decoding: data, as: UTF8.self)
+        
+        //Запоминаем имя сети
+        if (characteristic.uuid == CBUUID(string: "00000002-710E-4A5B-8D75-3E5B444BC3CF")) {
+            name = str
+            print("Имя сети: ", name)
+        }
+        
+        //Запоминаем пароль
+        if (characteristic.uuid == CBUUID(string: "00000003-710E-4A5B-8D75-3E5B444BC3CF")) {
+            password = str
+            print("Пароль: ", password)
+        }
+        
+        //Отправляем запрос на переход в активный режим
+        if (characteristic.uuid == CBUUID(string: "00000004-710E-4A5B-8D75-3E5B444BC3CF")) {
+            var parameter = NSInteger(65) //65 = 0x41 = "A"
+            let data = NSData(bytes: &parameter, length: 1)
+            peripheral.writeValue(data as Data, for: characteristic, type: .withResponse)
+            
+            //Разрываем Bluetooth-соединение
+            centralDevice.cancelPeripheralConnection(peripheralDevice)
+            print("Соединение разорвано")
+            
+            
+            //ВНИМАНИЕ!!! ЭТА СЕКЦИЯ НЕ РАБОТАЕТ, ТАК КАК НЕ ПРОПИСАНЫ CAPABILITIES "Hotspot Configuration" И "Wireless Accessory Configuration"
+            //А НЕ ПРОПИСАНЫ ОНИ, ТАК КАК БЕСПЛАТНАЯ ЛИЦЕНЗИЯ НЕ ПОЗВОЛЯЕТ РАБОТАТЬ С ЭТИМ ФУНЦИОНАЛОМ
+            //ЧТОБЫ ЭТО ЗАРАБОТАЛО, НАДО КУПИТЬ ЛИЦЕНЗИЮ ЗА 9К РУБЛЕЙ В ГОД
+            
+            /*
+            //Подключаемся к Wi-Fi
+            let configuration = NEHotspotConfiguration.init(ssid: name, passphrase: password, isWEP: false)
+            configuration.joinOnce = true
+
+            NEHotspotConfigurationManager.shared.apply(configuration) { (error) in
+                if error != nil {
+                    if error?.localizedDescription == "already associated."
+                    {
+                        print("Connected")
+                    }
+                    else{
+                        print("Not Connected")
+                    }
+                }
+                else {
+                    print("Connected")
+                }
+            }
+            */
+            
+            //Вызываем функцию, в которой происходит инициализация
+            setup()
+
+        }
+        
+    }
+    
+}
+
 
 
 
